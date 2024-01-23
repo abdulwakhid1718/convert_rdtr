@@ -128,16 +128,16 @@ document.getElementById("btn-convert").addEventListener("click", () => {
 
             bgnDataArray[kolomNama] = {
               bgnizn: {
-                data: []
+                data: [],
               },
               bgntbt: {
-                data: []
+                data: [],
               },
               bgntbs: {
-                data: []
+                data: [],
               },
               bgnbst: {
-                data: []
+                data: [],
               },
             };
 
@@ -200,7 +200,6 @@ document.getElementById("btn-convert").addEventListener("click", () => {
                   bgnDataArray[kolomNama].bgntbs.data.push(paddedNo);
                 }
                 // console.log(bgnDataArray[kolomNama].bgnizn);
-
               }
             });
             jsonData.push(jsonStructure);
@@ -209,16 +208,34 @@ document.getElementById("btn-convert").addEventListener("click", () => {
           // DKPZ
           rowObject.forEach((row) => {
             const obj = {
-              'id_kegiatan': String(row[kolomZona[0]]) || "-",
-              'kegiatan': String(row[kolomZona[1]]) || "-",
-              'KBLI 3 Digit': row[kolomZona[2]] !== undefined ? String(row[kolomZona[2]]) : "-",
-              'KBLI 4 Digit': row[kolomZona[3]] !== undefined ? String(row[kolomZona[3]]) : "-",
-              'KBLI 5 Digit': row[kolomZona[4]] !== undefined ? String(row[kolomZona[4]]) : "-",
-              'nilai_kbli': {
+              id_kegiatan: String(row[kolomZona[0]]) || "-",
+              kegiatan: String(row[kolomZona[1]]) || "-",
+              "KBLI 3 Digit":
+                row[kolomZona[2]] !== undefined
+                  ? String(row[kolomZona[2]])
+                  : "-",
+              "KBLI 4 Digit":
+                row[kolomZona[3]] !== undefined
+                  ? String(row[kolomZona[3]])
+                  : "-",
+              "KBLI 5 Digit":
+                row[kolomZona[4]] !== undefined
+                  ? String(row[kolomZona[4]])
+                  : "-",
+              nilai_kbli: {
                 data: {
-                  tiga_digit: row[kolomZona[2]] !== undefined ? String(row[kolomZona[2]]) : "-",
-                  empat_digit: row[kolomZona[3]] !== undefined ? String(row[kolomZona[3]]) : "-",
-                  lima_digit: row[kolomZona[4]] !== undefined ? String(row[kolomZona[4]]) : "-",
+                  tiga_digit:
+                    row[kolomZona[2]] !== undefined
+                      ? String(row[kolomZona[2]])
+                      : "-",
+                  empat_digit:
+                    row[kolomZona[3]] !== undefined
+                      ? String(row[kolomZona[3]])
+                      : "-",
+                  lima_digit:
+                    row[kolomZona[4]] !== undefined
+                      ? String(row[kolomZona[4]])
+                      : "-",
                 },
               },
             };
@@ -229,16 +246,14 @@ document.getElementById("btn-convert").addEventListener("click", () => {
           // Ubah data Excel menjadi format JSON yang diinginkan
           kolomZona = kolomZona.filter(
             (column) =>
-            !column.toLowerCase().includes("kode") &&
-            !column.toLowerCase().includes("kegiatan") &&
-            !column.toLowerCase().includes("3 digit") &&
-            !column.toLowerCase().includes("4 digit") &&
-            !column.toLowerCase().includes("5 digit")
-
+              !column.toLowerCase().includes("kode") &&
+              !column.toLowerCase().includes("kegiatan") &&
+              !column.toLowerCase().includes("3 digit") &&
+              !column.toLowerCase().includes("4 digit") &&
+              !column.toLowerCase().includes("5 digit")
           );
 
           kolomZona.forEach((kolom) => {
-
             const obj = {
               nilai_kolom_unik: kolom,
               kdb: {
@@ -275,6 +290,16 @@ document.getElementById("btn-convert").addEventListener("click", () => {
         } else if (key === 2) {
           kolomZona.forEach((kolom, i) => {
             index = i;
+            const fields = ["bgnizn", "bgntbt", "bgntbs", "bgnbst"];
+
+            fields.forEach((field) => {
+              sheetDuaJson[i][field] = bgnDataArray[kolom][field];
+
+              if (sheetDuaJson[i][field].data === "") {
+                sheetDuaJson[i][field].data = "-";
+              }
+            });
+
             sheetDuaJson[i].ktgbgn = {
               data: {
                 "Ketinggian Bangunan": {},
@@ -284,26 +309,6 @@ document.getElementById("btn-convert").addEventListener("click", () => {
             sheetDuaJson[i].gsb = {
               data: {},
             };
-
-            sheetDuaJson[i].bgnizn = bgnDataArray[kolom].bgnizn;
-            sheetDuaJson[i].bgntbt = bgnDataArray[kolom].bgntbt;
-            sheetDuaJson[i].bgntbs = bgnDataArray[kolom].bgntbs;
-            sheetDuaJson[i].bgnbst = bgnDataArray[kolom].bgnbst;
-            
-            console.log(bgnDataArray[kolom].bgnizn);
-
-            if (sheetDuaJson[i].bgnizn.data == "") {
-              sheetDuaJson[i].bgnizn.data = "-";
-            }
-            if (sheetDuaJson[i].bgntbt.data == "") {
-              sheetDuaJson[i].bgntbt.data = "-";
-            }
-            if (sheetDuaJson[i].bgntbs.data == "") {
-              sheetDuaJson[i].bgntbs.data = "-";
-            }
-            if (sheetDuaJson[i].bgnbst.data == "") {
-              sheetDuaJson[i].bgnbst.data = "-";
-            }
 
             rowObject.forEach((row, i) => {
               let values = row[kolom];
@@ -415,54 +420,60 @@ document.getElementById("btn-download-excel").addEventListener("click", () => {
   // Mengonversi workbook ke dalam format blob
   XLSX.writeFile(
     workbook,
-    "DBPZ_WP" + selectKecamatan.value + "_" + formattedDate + "_update.xlsx", {
+    "DBPZ_WP" + selectKecamatan.value + "_" + formattedDate + "_update.xlsx",
+    {
       bookType: "xlsx",
-      mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     }
   );
 });
 
 // DKPZ
-document.getElementById("btn-download-excel-DK").addEventListener("click", () => {
-  // Tampilkan alert gagal apabila user mengklik download sebelum melakukan konversi
-  if (DKPZ.length == 0) {
-    Swal.fire({
-      title: "Download Gagal",
-      text: "Mohon lakukan konversi JSON terlebih dahulu!",
-      icon: "error",
-      customClass: "swal-sm",
-    });
-    return;
-  }
-
-  // Membuat array dari objek untuk memperoleh nama kolom
-  const columns = Object.keys(DKPZ[0]);
-
-  // Membuat array 2D dari data objek
-  const rows = DKPZ.map((item) =>
-    columns.map((column) => {
-      if (typeof item[column] === "object") {
-        // Jika nilai kolom adalah objek, konversi menjadi string JSON
-        return JSON.stringify(item[column]);
-      } else {
-        return item[column];
-      }
-    })
-  );
-
-  // Membuat workbook dan worksheet
-  const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.aoa_to_sheet([columns, ...rows]);
-
-  // Menambahkan worksheet ke dalam workbook
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-  // Mengonversi workbook ke dalam format blob
-  XLSX.writeFile(
-    workbook,
-    "DKPZ_WP" + selectKecamatan.value + "_" + formattedDate + "_update.xlsx", {
-      bookType: "xlsx",
-      mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+document
+  .getElementById("btn-download-excel-DK")
+  .addEventListener("click", () => {
+    // Tampilkan alert gagal apabila user mengklik download sebelum melakukan konversi
+    if (DKPZ.length == 0) {
+      Swal.fire({
+        title: "Download Gagal",
+        text: "Mohon lakukan konversi JSON terlebih dahulu!",
+        icon: "error",
+        customClass: "swal-sm",
+      });
+      return;
     }
-  );
-});
+
+    // Membuat array dari objek untuk memperoleh nama kolom
+    const columns = Object.keys(DKPZ[0]);
+
+    // Membuat array 2D dari data objek
+    const rows = DKPZ.map((item) =>
+      columns.map((column) => {
+        if (typeof item[column] === "object") {
+          // Jika nilai kolom adalah objek, konversi menjadi string JSON
+          return JSON.stringify(item[column]);
+        } else {
+          return item[column];
+        }
+      })
+    );
+
+    // Membuat workbook dan worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet([columns, ...rows]);
+
+    // Menambahkan worksheet ke dalam workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    // Mengonversi workbook ke dalam format blob
+    XLSX.writeFile(
+      workbook,
+      "DKPZ_WP" + selectKecamatan.value + "_" + formattedDate + "_update.xlsx",
+      {
+        bookType: "xlsx",
+        mimeType:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }
+    );
+  });
